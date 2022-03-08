@@ -61,6 +61,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/**/target/*.jar
+          asset_path: ./github-api-endpoints-spi/target/github-api-endpoints.jar
           asset_name: github-api-endpoints.jar
           asset_content_type: application/java-archive
