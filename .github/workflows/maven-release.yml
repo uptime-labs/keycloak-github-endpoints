@@ -28,7 +28,8 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: jar-files
-          path: target/*.jar
+          path: **/target/*.jar
+          if-no-files-found: error
 
   release:
     name: Release Java Application
