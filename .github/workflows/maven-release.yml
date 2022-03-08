@@ -25,10 +25,10 @@ jobs:
       - name: Build with Maven
         run: mvn -B package --file github-api-endpoints-spi/pom.xml
       - name: Upload jar files
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: jar-files
-          path: **/target/*.jar
+          path: "${{ github.workspace }}/**/target/*.jar"
           if-no-files-found: error
 
   release:
