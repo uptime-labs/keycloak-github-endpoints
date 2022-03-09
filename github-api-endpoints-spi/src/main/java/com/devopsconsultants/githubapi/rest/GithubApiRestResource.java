@@ -15,6 +15,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import java.util.Map;
+import java.util.List;
 
 public class GithubApiRestResource {
 
@@ -56,7 +57,10 @@ public class GithubApiRestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response teamsAuthenticated() {
         checkRealmAdmin();
-        return Response.ok(Map.of("hello", auth.getUser().getUsername())).build();
+        return Response.ok(List.of(Map.of("name", "team1",
+                                          "slug", "team1",
+                                          "organization", Map.of("login", "github")))
+        ).build();
     }
 
     private void checkRealmAdmin() {
