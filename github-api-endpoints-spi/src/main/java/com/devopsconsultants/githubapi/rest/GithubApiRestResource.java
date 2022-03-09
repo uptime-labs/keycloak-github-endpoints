@@ -38,7 +38,17 @@ public class GithubApiRestResource {
     @Produces(MediaType.APPLICATION_JSON)
     public Response userAuthenticated() {
         checkRealmAdmin();
-        return Response.ok(Map.of("hello", auth.getUser().getUsername())).build();
+        String name;
+        name = new StringBuilder()
+            .append(auth.getUser().getFirstName())
+            .append(" ")
+            .append(auth.getUser().getLastName())
+            .toString();
+        return Response.ok(Map.of("login", auth.getUser().getUsername(),
+                                    "id", auth.getUser().getId(),
+                                    "email", auth.getUser().getEmail(),
+                                    "name", name
+        )).build();
     }
 
     @GET
