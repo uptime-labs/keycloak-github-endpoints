@@ -38,7 +38,9 @@ public class GithubApiRestResource {
     @Path("user")
     @Produces(MediaType.APPLICATION_JSON)
     public Response userAuthenticated() {
-        checkRealmAdmin();
+        if (auth == null) {
+            throw new NotAuthorizedException("Bearer");
+        }
         String name;
         name = new StringBuilder()
             .append(auth.getUser().getFirstName())
@@ -56,7 +58,9 @@ public class GithubApiRestResource {
     @Path("user/teams")
     @Produces(MediaType.APPLICATION_JSON)
     public Response teamsAuthenticated() {
-        checkRealmAdmin();
+        if (auth == null) {
+            throw new NotAuthorizedException("Bearer");
+        }
         return Response.ok(List.of(Map.of("name", "team1",
                                           "slug", "team1",
                                           "organization", Map.of("login", "github")))
