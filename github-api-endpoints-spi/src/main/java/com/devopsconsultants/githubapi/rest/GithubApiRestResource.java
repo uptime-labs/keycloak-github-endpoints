@@ -18,6 +18,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import java.util.Map;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class GithubApiRestResource {
 
@@ -64,15 +65,21 @@ public class GithubApiRestResource {
             throw new NotAuthorizedException("Bearer");
         }
 
-        List<Map<String,Object>> rolesList = List.of(); 
+        List<Map<String,String>> rolesList = auth.getUser().getRoleMappingsStream()
+                                                .map( p -> Map.of("name", p.getName(), 
+                                                                      "slug", p.getId(), 
+                                                                      "organization", Map.of("login", session.getContext().getRealm().getName()).toString() ))
+                                                .collect(Collectors.toList());
 
-        for( RoleModel role : auth.getUser().getRoleMappingsStream().toArray(x -> new RoleModel[x]) ) {
-            rolesList.add(
-                Map.of("name", role.getName(),
-                        "slug", role.getId(),
-                        "organization", Map.of("login", session.getContext().getRealm().getName() ))
-            );
-        }
+
+        // for( RoleModel role : auth.getUser().getRoleMappingsStream().toArray(x -> new RoleModel[x]) ) {
+        //     rolesList.add(
+        //         Map.of("name", role.getName(),
+        //                 "slug", role.getId(),
+        //                 "organization", Map.of("login", session.getContext().getRealm().getName() ))
+        //     );
+        // }
+
         return Response.ok(rolesList).build();
     }
 
