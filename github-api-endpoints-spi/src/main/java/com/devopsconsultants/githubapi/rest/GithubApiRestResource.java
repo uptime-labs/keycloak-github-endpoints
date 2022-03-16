@@ -1,6 +1,8 @@
 package com.devopsconsultants.githubapi.rest;
 
 import org.keycloak.models.KeycloakSession;
+import org.keycloak.models.RoleModel;
+import org.keycloak.models.RoleMapperModel;
 import org.keycloak.services.managers.AppAuthManager;
 import org.keycloak.services.managers.AuthenticationManager;
 
@@ -61,10 +63,17 @@ public class GithubApiRestResource {
         if (auth == null) {
             throw new NotAuthorizedException("Bearer");
         }
-        return Response.ok(List.of(Map.of("name", "team1",
-                                          "slug", "team1",
-                                          "organization", Map.of("login", "github")))
-        ).build();
+
+        List<Map<String,Object>> rolesList = List.of(); 
+
+        for( RoleModel role : auth.getUser().getRoleMappingsStream().toArray(x -> new RoleModel[x]) ) {
+            rolesList.add(
+                Map.of("name", role.getName(),
+                        "slug", role.getId(),
+                        "organization", Map.of("login", session.getContext().getRealm().getName() ))
+            );
+        }
+        return Response.ok(rolesList).build();
     }
 
     private void checkRealmAdmin() {
