@@ -65,10 +65,10 @@ public class GithubApiRestResource {
             throw new NotAuthorizedException("Bearer");
         }
 
-        List<Map<String,String>> rolesList = auth.getUser().getRoleMappingsStream()
+        List<Map<String,Object>> rolesList = auth.getUser().getRoleMappingsStream()
                                                 .map( p -> Map.of("name", p.getName(), 
-                                                                      "slug", p.getId(), 
-                                                                      "organization", Map.of("login", session.getContext().getRealm().getName()).toString() ))
+                                                                   "slug", p.getId(), 
+                                                                   "organization", Map.of("login", session.getContext().getRealm().getName()) ))
                                                 .collect(Collectors.toList());
 
 
