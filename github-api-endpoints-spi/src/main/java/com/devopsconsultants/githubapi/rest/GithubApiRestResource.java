@@ -17,8 +17,10 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import java.util.Map;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class GithubApiRestResource {
 
@@ -65,13 +67,26 @@ public class GithubApiRestResource {
             throw new NotAuthorizedException("Bearer");
         }
 
+        // Get any directly assigned roles
         List<Map<String,Object>> rolesList = auth.getUser().getRoleMappingsStream()
                                                 .map( p -> Map.of("name", p.getName(), 
                                                                    "slug", p.getName(), 
                                                                    "organization", Map.of("login", session.getContext().getRealm().getName()) ))
                                                 .collect(Collectors.toList());
 
-        return Response.ok(rolesList).build();
+        // Also check for roles assigned to groups
+        List<String> groupRoles = auth.getUser().getGroupsStream()
+                                        .map( g -> g.getRoleMappingsStream()
+                                                       .map( p -> p.getName() )
+                                                       .collect(Collectors.toList()) )
+                                        .flatMap(Collection::stream)
+                                        .collect(Collectors.toList()); 
+        List<Map<String, Object>> groupRolesList = groupRoles.stream().map( p -> Map.of( "name", p,
+                                                                                         "slug", p,
+                                                                                         "organization", Map.of("login", session.getContext().getRealm().getName()) ))
+                                                                      .collect(Collectors.toList());
+
+        return Response.ok(Stream.of(rolesList, groupRolesList).flatMap(Collection::stream).collect(Collectors.toList()) ).build();
     }
 
     private void checkRealmAdmin() {
