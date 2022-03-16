@@ -67,18 +67,9 @@ public class GithubApiRestResource {
 
         List<Map<String,Object>> rolesList = auth.getUser().getRoleMappingsStream()
                                                 .map( p -> Map.of("name", p.getName(), 
-                                                                   "slug", p.getId(), 
+                                                                   "slug", p.getName(), 
                                                                    "organization", Map.of("login", session.getContext().getRealm().getName()) ))
                                                 .collect(Collectors.toList());
-
-
-        // for( RoleModel role : auth.getUser().getRoleMappingsStream().toArray(x -> new RoleModel[x]) ) {
-        //     rolesList.add(
-        //         Map.of("name", role.getName(),
-        //                 "slug", role.getId(),
-        //                 "organization", Map.of("login", session.getContext().getRealm().getName() ))
-        //     );
-        // }
 
         return Response.ok(rolesList).build();
     }
